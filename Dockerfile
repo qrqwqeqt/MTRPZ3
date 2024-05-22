@@ -1,7 +1,11 @@
-FROM python:3.11.2-alpine3.16 AS builder
+FROM golang
 
-RUN apk update
-RUN apk --no-cache add musl-dev g++
-COPY requirements requirements
-RUN python -m venv /.venv
-ENV PATH="/.venv/bin:$PATH"
+WORKDIR /app
+
+COPY . .
+
+RUN go build -o build/fizzbuzz
+
+EXPOSE 8080
+
+CMD ["./build/fizzbuzz", "serve"]
