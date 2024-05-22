@@ -1,24 +1,13 @@
-FROM golang AS builder
+FROM node:14
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY go.mod .
-COPY go.sum .
+COPY package*.json ./
 
-RUN go mod download
+RUN npm install
 
-COPY cmd ./cmd
-COPY lib ./lib
-COPY templates ./templates
-COPY main.go .
+COPY . .
 
-RUN CGO_ENABLED=0 go build -o ./fizzbuzz
+EXPOSE 3000
 
-FROM gcr.io/distroless/static-debian11
-
-COPY --from=builder /app/fizzbuzz /fizzbuzz
-COPY templates /templates
-
-EXPOSE 8080
-
-CMD ["/fizzbuzz", "serve"]
+CMD [ "node", "app.js" ]
